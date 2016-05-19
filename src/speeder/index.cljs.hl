@@ -1,0 +1,91 @@
+(page "index.html"
+  (:require
+    [hoplon.twitter.bootstrap :refer [container]]
+    [sections.nav :as nav]))
+
+(defc start-visible? false)
+
+(defn start-modal [active?]
+  ((div :class "modal")
+    :class (cell= {:active true})
+    (i :class "close red icon"
+       :click #(reset! active? false))))
+
+(defelem modal-dialog
+         [{:keys [id visible title bg-action]
+           :or   {title ""}}
+          kids]
+         (let [hide #(reset! visible false)
+               bg-click (if bg-action bg-action hide)]
+           (spliced
+             ((div :class "modal-bg")
+               :class (cell= {:show-modal visible})
+               :click bg-click)
+             ((div :class "ui small modal")
+               :style "min-height:100px"
+               :class (cell= {:visible visible})
+               (div :class "header" title)
+               (div :id id :class "content"
+                    "Loading...")
+               kids))))
+
+
+(defelem start-btn
+         [{:keys [id css-class txt]
+           :or   {id "" css-class "" txt "Contact Us"}}]
+         (div :id id :class (str "ui " css-class " button")
+              :data-toggle "modal"
+              :data-targer "start-modal"
+              :click #(reset! start-visible? true)
+              :text txt))
+
+
+; Pick the default way of toggling DOM elements here:
+;; (def also-if toggle-visibility)
+
+(def start-message (div :id "start-modal" :class "modal-content"
+                        (h3 "To get started enter your name as it appears on the citation and
+                        we will check our database to see if we have you listed")
+                        (form :class "ui form"
+                        (div :class "fields"
+                              (div :class "field"
+                                   (label "First Name")
+                                   (input :type "text" :name "first-name" :placeholder "First Name"))
+                                   (div :class "field"
+                                   (label "Last Name")
+                                   (input :type "text" :name "last-name" :placeholder "Last Name"))
+                                   (div :class "ui labeled icon button"
+                                   (i :class "right arrow icon") "Next")))))
+
+(defelem copyright-footer [_ _]
+  (div :css {:padding "30px 0px"}
+    (div :css {:text-align "center"}
+      "Copyright © Brooke and Sons Web Builders. All rights reserved.")))
+
+(html
+  (head
+    (link :rel "stylesheet" :href "https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/cosmo/bootstrap.min.css")
+    (link :rel "stylesheet" :href "css/modern.css"))
+
+  (body
+   (nav/main-menu)
+   (div :class "home-image"
+        (div :id "main-title"
+             (h1 "Speedlaw")
+             (h2 "Traffic Court in Rowan County")
+             (h3 "The online resource for Traffic Court in Rowan County")
+             (h3 "sponsored by Brooke and Brooke Attorneys")
+             (button :type "button" :class "btn-default"
+                     :text
+                     "Press here to Inquire about a Rowan County Case"
+                     :data-toggle "modal"
+                     :data-target "start-modal"
+                     :click #(reset! start-visible? true))))
+
+   (container
+    (div :col {:sm 6}
+         (h3 "Your ticket and Driver License Points"))
+    (div :col {:sm 6}))
+
+   (footer
+    (copyright-footer))))

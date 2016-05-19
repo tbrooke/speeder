@@ -4,6 +4,7 @@
                   [hoplon/boot-hoplon        "0.1.13"]
                   [hoplon/hoplon             "6.0.0-alpha14"]
                   [org.clojure/clojure       "1.7.0"]
+                  [hoplon/twitter-bootstrap   "0.2.0"]
                   [org.clojure/clojurescript "1.8.51"]
                   [tailrecursion/boot-jetty  "0.1.3"]]
   :source-paths #{"src"}
