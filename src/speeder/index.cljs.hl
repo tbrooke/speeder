@@ -1,52 +1,28 @@
 (page "index.html"
   (:require
     [hoplon.twitter.bootstrap :refer [container]]
-    [sections.nav :as nav]))
-
-(defc start-visible? false)
-
-(defn start-modal [active?]
-  ((div :class "modal")
-    :class (cell= {:active true})
-    (i :class "close red icon"
-       :click #(reset! active? false))))
-
-(defelem modal-dialog
-         [{:keys [id visible title bg-action]
-           :or   {title ""}}
-          kids]
-         (let [hide #(reset! visible false)
-               bg-click (if bg-action bg-action hide)]
-           (spliced
-             ((div :class "modal-bg")
-               :class (cell= {:show-modal visible})
-               :click bg-click)
-             ((div :class "ui small modal")
-               :style "min-height:100px"
-               :class (cell= {:visible visible})
-               (div :class "header" title)
-               (div :id id :class "content"
-                    "Loading...")
-               kids))))
+    [sections.nav :as nav]
+    [ui.form :as ui]
+    [sections.section :as st]))
 
 
-(defelem start-btn
-         [{:keys [id css-class txt]
-           :or   {id "" css-class "" txt "Contact Us"}}]
-         (div :id id :class (str "ui " css-class " button")
-              :data-toggle "modal"
-              :data-targer "start-modal"
-              :click #(reset! start-visible? true)
-              :text txt))
 
+;; (defelem start-btn
+;;          [{:keys [id css-class txt]
+;;            :or   {id "" css-class "" txt "Contact Us"}}]
+;;          (div :id id :class (str "ui " css-class " button")
+;;               :data-toggle "modal"
+;;               :data-targer "start-modal"
+;;               :click #(reset! start-visible? true)
+;;               :text txt))
+;; 
 
-; Pick the default way of toggling DOM elements here:
-;; (def also-if toggle-visibility)
+Pick the default way of toggling DOM elements here:
+(def also-if toggle-visibility)
 
-(def start-message (div :id "start-modal" :class "modal-content"
+(def modal-open (ui/modal-form :id "start-modal" :open  :class "modal-content"
                         (h3 "To get started enter your name as it appears on the citation and
                         we will check our database to see if we have you listed")
-                        (form :class "ui form"
                         (div :class "fields"
                               (div :class "field"
                                    (label "First Name")
@@ -55,7 +31,22 @@
                                    (label "Last Name")
                                    (input :type "text" :name "last-name" :placeholder "Last Name"))
                                    (div :class "ui labeled icon button"
-                                   (i :class "right arrow icon") "Next")))))
+                                   (i :class "right arrow icon") "Next"))))
+
+
+
+(defelem home*
+  [attr kids] 
+  (let [modal-backdrop (div)]
+    (hoplon.core/body
+     :class (cell= {:modal-open modal-open})
+     kids
+     (modal-backdrop
+      :toggle modal-open
+      :class (cell= {:modal-backdrop true
+                     :fade true
+                     :in modal-open})))))
+
 
 (defelem copyright-footer [_ _]
   (div :css {:padding "30px 0px"}
@@ -80,12 +71,15 @@
 
 (html
   (head
+   (html-meta :charset "utf-8")
+   (html-meta :http-equiv "UA-Compatible" :content "IE=edge,chrome=1")
     (link :rel "stylesheet" :href "https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/cosmo/bootstrap.min.css")
-    (link :rel "stylesheet" :href "css/modern.css"))
+    (link :rel "stylesheet" :href "css/modern.css")
+    (title "Speedlaw.me"))
 
   (body
    (nav/main-menu)
-   (div :class "home-image"
+   (home :class "home-image"
         (div :id "main-title"
              (h1 "Speedlaw")
              (h2 "Traffic Court in Rowan County")
@@ -94,10 +88,8 @@
              (button :type "button" :class "btn-default"
                      :text
                      "Press here to Inquire about a Rowan County Case"
-                     :data-toggle "modal"
-                     :data-target "start-modal"
-                     :click #(reset! start-visible? true))))
-   (container
+                     :click #(swap! modal-open :modal-open )    #(reset! start-visible? true))))
+   (container 
     (license-points)
     (insurance-points))
    (footer
