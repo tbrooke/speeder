@@ -6,3 +6,11 @@ body {
 h1 {
     color: blue;
 }
+
+#license-points {
+    float: left;
+}
+
+#insurance-points {
+    float: right; 
+}
