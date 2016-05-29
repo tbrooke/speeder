@@ -2,72 +2,60 @@
   (:require
     [hoplon.twitter.bootstrap :refer [container]]
     [sections.nav :as nav]
-    [ui.form :as ui]
-    [sections.section :as st]))
+    [sections.section  :as sec]))
+
+(defmacro defv [i c v]
+  `(defc= ~i {:valid? (if (~v ~c) true false)
+              :value ~c}))
+
+;; (defn inquiry
+;;   (let [speeder (cell "")]
+;;     (input
+;;      :type "text"
+;;      :value speeder
+;;      :change #(reset! speeder @%))))
+
+
+;; ;; (defc form-name nil)
+;; (defc form-email nil)
 
 
 
-;; (defelem start-btn
-;;          [{:keys [id css-class txt]
-;;            :or   {id "" css-class "" txt "Contact Us"}}]
-;;          (div :id id :class (str "ui " css-class " button")
-;;               :data-toggle "modal"
-;;               :data-targer "start-modal"
-;;               :click #(reset! start-visible? true)
-;;               :text txt))
-;; 
+;; (defn validate-presence [v] (seq v))
 
-Pick the default way of toggling DOM elements here:
-(def also-if toggle-visibility)
-
-(def modal-open (ui/modal-form :id "start-modal" :open  :class "modal-content"
-                        (h3 "To get started enter your name as it appears on the citation and
-                        we will check our database to see if we have you listed")
-                        (div :class "fields"
-                              (div :class "field"
-                                   (label "First Name")
-                                   (input :type "text" :name "first-name" :placeholder "First Name"))
-                                   (div :class "field"
-                                   (label "Last Name")
-                                   (input :type "text" :name "last-name" :placeholder "Last Name"))
-                                   (div :class "ui labeled icon button"
-                                   (i :class "right arrow icon") "Next"))))
+;; (defv form-name-valid? form-name validate-presence)
 
 
 
-(defelem home*
-  [attr kids] 
-  (let [modal-backdrop (div)]
-    (hoplon.core/body
-     :class (cell= {:modal-open modal-open})
-     kids
-     (modal-backdrop
-      :toggle modal-open
-      :class (cell= {:modal-backdrop true
-                     :fade true
-                     :in modal-open})))))
+(defn loud [& children]
+  (div :css {:text-transform "uppercase"} children))
 
 
-(defelem copyright-footer [_ _]
-  (div :css {:padding "30px 0px"}
-    (div :css {:text-align "center"}
-      "Copyright © Brooke and Sons Web Builders. All rights reserved.")))
+
+(defelem centered-well [kids]
+  (div :class "section text-center"
+       (div :class "container"
+            (div :class "row well"
+                 (div :class "col-lg-12"
+                      kids)))))
 
 (def license-points 
-   (div  :id "license-points" :col {:sm 6}
-         (h3 "Your ticket and Driver License Points")
-         (p :col {:sm 9}
-            "In North Carolina the Department of Motor Vehicle assigns points for
+  (div  :id "license-points" :col {:sm 6}
+        (h3 "Your ticket and Driver License Points")
+        (p :col {:sm 9}
+           "In North Carolina the Department of Motor Vehicle assigns points for
               traffic violations. If you accumulate enough points you may loose your
                right to drive. For speeding violations the points are as follows:")))
 
 (def insurance-points 
-   (div  :id "insurance-points" :col {:sm 6}
-         (h3 "Your ticket and Insurance Points")
-         (p :col {:sm 9}
-            "North Carolina has a separate system for assigning Insurance Points. This system determines the amount
+  (div  :id "insurance-points" :col {:sm 6}
+        (h3 "Your ticket and Insurance Points")
+        (p :col {:sm 9}
+           "North Carolina has a separate system for assigning Insurance Points. This system determines the amount
              of your Insurance premium. You can often save money by reducing a charge so that you will receive fewer
               Insurance points")))
+
+
 
 (html
   (head
@@ -76,21 +64,21 @@ Pick the default way of toggling DOM elements here:
     (link :rel "stylesheet" :href "https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/cosmo/bootstrap.min.css")
     (link :rel "stylesheet" :href "css/modern.css")
     (title "Speedlaw.me"))
-
   (body
-   (nav/main-menu)
-   (home :class "home-image"
-        (div :id "main-title"
+   (nav/main-menu) 
+   (div :class "home-image"
+         (div :id "main-title"
              (h1 "Speedlaw")
              (h2 "Traffic Court in Rowan County")
              (h3 "The online resource for Traffic Court in Rowan County")
              (h3 "sponsored by Brooke and Brooke Attorneys")
              (button :type "button" :class "btn-default"
                      :text
-                     "Press here to Inquire about a Rowan County Case"
-                     :click #(swap! modal-open :modal-open )    #(reset! start-visible? true))))
-   (container 
+                     "Enter a Name to Inquire about a Rowan County Case")))
+   (container
     (license-points)
     (insurance-points))
+   (container
+    (centered-well (p (loud "Shout" "at" "me"))))
    (footer
-    (copyright-footer))))
+    (sec/copyright-footer))))

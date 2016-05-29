@@ -1,5 +1,26 @@
 (ns sections.section)
 
+(def license-points 
+  (div  :id "license-points" :col {:sm 6}
+        (h3 "Your ticket and Driver License Points")
+        (p :col {:sm 9}
+           "In North Carolina the Department of Motor Vehicle assigns points for
+              traffic violations. If you accumulate enough points you may loose your
+               right to drive. For speeding violations the points are as follows:")))
+
+(def insurance-points 
+  (div  :id "insurance-points" :col {:sm 6}
+        (h3 "Your ticket and Insurance Points")
+        (p :col {:sm 9}
+           "North Carolina has a separate system for assigning Insurance Points. This system determines the amount
+             of your Insurance premium. You can often save money by reducing a charge so that you will receive fewer
+              Insurance points")))
+
+(defelem copyright-footer [_ _]
+  (div :css {:padding "30px 0px"}
+       (div :css {:text-align "center"}
+            "Copyright © Brooke and Sons Web Builders. All rights reserved.")))
+
 (defelem row [& kids]
   (div :class "section"
     (div :class "container"
