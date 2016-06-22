@@ -22,6 +22,11 @@ body {
   margin-bottom: 30px;
 }
 
+input.form-control {
+    opacity: .70;
+    font-size: 20px;
+}
+
 .tab-pane {
   margin-top: 15px;
 }
@@ -60,6 +65,11 @@ body {
     height: 45px;
 }
 
+.inner-cover {
+    width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+}
 /* Half Page Height Carousel Customization */
 .carousel {
   height: 50%;
