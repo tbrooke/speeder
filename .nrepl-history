@@ -1,0 +1,4 @@
+(part even? (range 10))
+(even? (range 10))
+)
+exit

@@ -2,42 +2,74 @@
   (:require
     [hoplon.twitter.bootstrap :refer [container]]
     [sections.nav :as nav]
+    [speeder.utils.routes :as rte]
+    [javelin.core :refer [defc=]]
     [sections.section  :as sec]))
+
+
+;; VFORMS Package - From Hoplon Demos
 
 (defmacro defv [i c v]
   `(defc= ~i {:valid? (if (~v ~c) true false)
               :value ~c}))
 
-;; (defn inquiry
 ;;   (let [speeder (cell "")]
 ;;     (input
 ;;      :type "text"
 ;;      :value speeder
 ;;      :change #(reset! speeder @%))))
 
+;; Input Cells
 
-;; ;; (defc form-name nil)
-;; (defc form-email nil)
+ (defc form-name nil)
+ (defc form-email nil)
 
-
-
-;; (defn validate-presence [v] (seq v))
-
-;; (defv form-name-valid? form-name validate-presence)
+;; Validations
 
 
+(defn validate-presence [v] (seq v))
 
-(defn loud [& children]
-  (div :css {:text-transform "uppercase"} children))
+(defn validate-regexp [r]
+    (fn [v] (re-matches r (or v ""))))
+
+
+(defv form-name-valid? form-name validate-presence)
+(defv form-email-valid? form-email (validate-regexp #"(?i)\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b"))
+
+
+(defc= is-form-valid? (and (:valid? form-name-valid?) (:valid? form-email-valid?)))
+
+(defc= form-data {:name form-name
+                  :email form-email})
+
+
+;; operations
+
+(defn submit-form [_] (js/alert (str "Send: " (pr-str @form-data))))
+
+
+;; custom elements
+
+(defelem cell-input [{:keys [cell] :as attrs}]
+  (let [target-value #(do! (-> % .-currentTarget) :value)]
+    (input (-> attrs
+               (dissoc :cell)
+               (assoc :type (:type attrs "text")
+                      :value cell
+                      :input #(reset! cell (target-value %)))))))
+
+(defelem form-group [{:keys [valid?] :as attrs} body]
+  (let [dirty? (fn [v] (-> v nil? not))]
+    ((div (dissoc attrs :valid?) body)
+     :class (cell= {:form-group true
+                    :has-error (and (dirty? (:value valid?)) (not (:valid? valid?)))}))))
+
+(defelem input-control [attrs]
+  ((cell-input attrs) :class {:form-control true}))
 
 
 
-(defelem centered-well [kids]
-  (div :class "section text-center"
-       (div :class "container"
-            (div :class "row well"
-                 (div :class "col-lg-12"
-                      kids)))))
+;; Sections - To be Moved
 
 (def license-points 
   (div  :id "license-points" :col {:sm 6}
@@ -54,9 +86,6 @@
            "North Carolina has a separate system for assigning Insurance Points. This system determines the amount
              of your Insurance premium. You can often save money by reducing a charge so that you will receive fewer
               Insurance points")))
-
-
-
 (html
   (head
    (html-meta :charset "utf-8")
@@ -66,19 +95,30 @@
     (title "Speedlaw.me"))
   (body
    (nav/main-menu) 
-   (div :class "home-image"
-         (div :id "main-title"
+   (div :class "home-image":toggle (cell= (= (:main route) "main"))
+
+        (div :id "main-title"
              (h1 "Speedlaw")
              (h2 "Traffic Court in Rowan County")
              (h3 "The online resource for Traffic Court in Rowan County")
              (h3 "sponsored by Brooke and Brooke Attorneys")
-             (button :type "button" :class "btn-default"
-                     :text
-                     "Enter a Name to Inquire about a Rowan County Case")))
+             (p "If you have recently received a ticket we may already have you in our database")
+             (div :class "cover-container"
+                  (div :class "inner-cover"
+                       (form :submit submit-form
+                             (form-group :valid? form-name-valid?
+                                         (label " Name as appears on citation")
+                                         (input-control :cell form-name))
+                             (form-group :valid? form-email-valid?
+                                         (label " Email: ")
+                                         (input-control :cell form-email))
+                             (div :class "text-right"
+                                  (div :class "text-center"
+                                       (button :class "btn btn-primary"
+                                               :text "Submit"
+                                               :type "submit"))))))))
    (container
     (license-points)
     (insurance-points))
-   (container
-    (centered-well (p (loud "Shout" "at" "me"))))
    (footer
     (sec/copyright-footer))))

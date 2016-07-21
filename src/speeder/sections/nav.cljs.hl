@@ -32,3 +32,6 @@
             (ul :class "dropdown-menu"
               (li (a :href "pricing.html" "Pricing Page")))))))))
 
+(def route ["/index.html" :main])
+
+

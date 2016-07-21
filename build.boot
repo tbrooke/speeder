@@ -2,7 +2,7 @@
   :dependencies '[[adzerk/boot-cljs          "1.7.228-1"]
                   [adzerk/boot-reload        "0.4.7"]
                   [hoplon/boot-hoplon        "0.1.13"]
-                  [hoplon/hoplon             "6.0.0-alpha14"]
+                  [hoplon/hoplon             "6.0.0-alpha16"]
                   [org.clojure/clojure       "1.7.0"]
                   [hoplon/twitter-bootstrap  "0.2.0"]
                   [bidi                      "2.0.9"]
