@@ -95,7 +95,7 @@
     (title "Speedlaw.me"))
   (body
    (nav/main-menu) 
-   (div :class "home-image":toggle (cell= (= (:main route) "main"))
+   (div :class "home-image"
 
         (div :id "main-title"
              (h1 "Speedlaw")
